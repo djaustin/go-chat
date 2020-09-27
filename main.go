@@ -27,7 +27,9 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	mainRoom := newRoom()
 	http.Handle("/", &templateHandler{filename: "chat.html"})
-
+	http.Handle("/room", mainRoom)
+	go mainRoom.run()
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
