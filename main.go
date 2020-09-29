@@ -5,8 +5,11 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"sync"
+
+	"github.com/djaustin/go-chat/trace"
 )
 
 type templateHandler struct {
@@ -30,10 +33,14 @@ func (t *templateHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func main() {
 	addr := flag.String("addr", ":8080", "The address of the application")
 	flag.Parse()
+
 	mainRoom := newRoom()
+	mainRoom.tracer = trace.New(os.Stdout)
+	go mainRoom.run()
+
 	http.Handle("/", &templateHandler{filename: "chat.html"})
 	http.Handle("/room", mainRoom)
-	go mainRoom.run()
+
 	log.Println("Starting application on", *addr)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }
