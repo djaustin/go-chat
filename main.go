@@ -38,7 +38,7 @@ func main() {
 	mainRoom.tracer = trace.New(os.Stdout)
 	go mainRoom.run()
 
-	http.Handle("/", &templateHandler{filename: "chat.html"})
+	http.Handle("/", mustAuth(&templateHandler{filename: "chat.html"}))
 	http.Handle("/room", mainRoom)
 
 	log.Println("Starting application on", *addr)
